@@ -1,0 +1,56 @@
+-- GENERATED SCHEMA FOR MYSQL DIALECT
+#parse("/class/templates/sql/mysql/sql_macro.vm")
+-- DROP ALL TABLES
+#foreach(${table} in ${tables})
+${queryFactory.tableQueryFactory().dropTable(${table.name})}
+#if(${table.localeSupportTableRequired})
+${queryFactory.tableQueryFactory().dropTable("${table.name}_LOC")}
+#end
+#end
+
+-- CREATE NEW TABLES
+#foreach(${table} in ${tables})
+${queryFactory.tableQueryFactory().createTable(${table})}
+#foreach(${index} in ${table.indexes.entrySet()})
+${queryFactory.tableQueryFactory().crateIndex(${index.key}, ${table.name}, ${index.value.tableFields})}
+#end
+#if(${table.localeSupportTableRequired})
+${queryFactory.tableQueryFactory().createLocTable(${table.name})}
+#end
+#end
+
+-- INSERT META ITEMS
+#insertInto($metaTypeItems)
+
+-- INSERT META ATTRIBUTE TYPE ITEMS
+#insertInto($metaAttributeTypeItems)
+
+-- INSERT REGULAR TYPE ITEMS
+#insertInto($regularTypeItems)
+
+-- INSERT ENUM TYPE ITEMS
+#insertInto($enumTypeItems)
+
+-- INSERT ENUM VALUS TYPE ITEMS
+#insertInto($enumValueTypeItems)
+
+-- INSERT RELATIONS
+#insertInto($metaRelationItems)
+#insertInto($inheritanceRelationItems)
+#insertInto($attributeOwnerRelationItems)
+#insertInto($enumValueOwnerRelationItems)
+
+#* @vtlvariable name="date" type="org.apache.velocity.tools.generic.DateTool" *#
+#* @vtlvariable name="tables" type="java.util.List<com.coretex.build.data.db.Table>" *#
+#* @vtlvariable name="insert" type="com.coretex.build.data.db.inserts.Insert" *#
+#* @vtlvariable name="metaTypeItems" type="java.util.List<com.coretex.build.data.db.inserts.Insert>" *#
+#* @vtlvariable name="metaAttributeTypeItems" type="java.util.List<com.coretex.build.data.db.inserts.Insert>" *#
+#* @vtlvariable name="regularTypeItems" type="java.util.List<com.coretex.build.data.db.inserts.Insert>" *#
+#* @vtlvariable name="enumTypeItems" type="java.util.List<com.coretex.build.data.db.inserts.Insert>" *#
+#* @vtlvariable name="enumValueTypeItems" type="java.util.List<com.coretex.build.data.db.inserts.Insert>" *#
+#* @vtlvariable name="metaRelationItems" type="java.util.List<com.coretex.build.data.db.inserts.Insert>" *#
+#* @vtlvariable name="inheritanceRelationItems" type="java.util.List<com.coretex.build.data.db.inserts.Insert>" *#
+#* @vtlvariable name="attributeOwnerRelationItems" type="java.util.List<com.coretex.build.data.db.inserts.Insert>" *#
+#* @vtlvariable name="enumValueOwnerRelationItems" type="java.util.List<com.coretex.build.data.db.inserts.Insert>" *#
+#* @vtlvariable name="vmUtils" type="com.coretex.common.utils.VmUtils" *#
+#* @vtlvariable name="queryFactory" type="com.coretex.build.services.QueryFactory" *#

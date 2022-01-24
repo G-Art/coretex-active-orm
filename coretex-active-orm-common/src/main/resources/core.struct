@@ -1,0 +1,238 @@
+elements {
+
+    relations {
+        MetaTypeInheritanceRelation(source: MetaType, target: MetaType) {
+            source(parent) {
+                description = "Super Type uuid"
+            }
+            target(subtypes) {
+                description = "Set of child types of this type"
+                containerType = Set
+            }
+        }
+
+        MetaAttributeOwnerRelation(source: MetaAttributeType, target: MetaType) {
+            source(owner) {
+                description = "Owner of this attribute"
+                optional = false
+            }
+            target(itemAttributes) {
+                description = "Super Type uuid"
+                containerType = Set
+            }
+        }
+
+        MetaEnumValueOwnerRelation(source: MetaEnumValueType, target: MetaEnumType) {
+            source(owner) {
+                description = "Enum value owner"
+            }
+            target(values) {
+                description = "Enum values"
+                containerType = Set
+            }
+        }
+
+        LocaleCountryRelation(source: Locale, target: Country) {
+            source(countries) {
+                description = "Countries "
+                containerType = Set
+            }
+            target(locales) {
+                description = "Locales"
+                containerType = Set
+            }
+        }
+    }
+
+    items {
+        Generic(extend: "", abstract: true) {
+            description = "Generic item"
+            attributes {
+                createDate(LocalDateTime) {
+                    description = "Creation date"
+                }
+
+                updateDate(LocalDateTime) {
+                    description = "Updating date"
+                }
+
+                metaType(MetaType) {
+                    description = "Relation to meta type description"
+                }
+            }
+        }
+
+        RegularType {
+            description = "Regular item"
+            attributes {
+                dbType(String) {
+                    description = "Sql type representation"
+                    optional = false
+                }
+
+                regularItemCode(String) {
+                    description = "Java type representation"
+                    unique = true
+                    optional = false
+                }
+
+                regularClass(Class) {
+                    description = "Java class type representation"
+                    optional = false
+                }
+
+                persistenceType(String) {
+                    description = "Persistence value qualifier"
+                }
+
+                columnSize(Integer) {
+                    description = "Persistence value qualifier"
+                }
+            }
+        }
+
+        MetaType {
+            description = "Meta information of item"
+            attributes {
+                typeCode(String) {
+                    description = "Item code"
+                    unique = true
+                    optional = false
+                    index = ['code_idx']
+                }
+
+                itemClass(Class) {
+                    description = "Item Class Name"
+                    optional = false
+                }
+
+                tableName(String) {
+                    description = "Table Name"
+                    optional = false
+                }
+
+                tableOwner(Boolean) {
+                    description = "Specify creation separate table for that item"
+                    defaultValue = true
+                }
+                description(String) {
+                    description = "Description of type"
+                }
+
+                abstract(Boolean) {
+                    description = "Is abstract type"
+                }
+            }
+        }
+
+        MetaAttributeType {
+            description = "Meta Type Attributes"
+            attributes {
+                attributeTypeCode(String) {
+                    description = "Describes the type of attribute"
+                    optional = false
+                }
+                attributeType(Generic) {
+                    description = "The type of a value that attribute returns"
+                    optional = false
+                }
+                attributeName(String) {
+                    description = "Attribute Name"
+                    optional = false
+                }
+                localized(Boolean) {
+                    description = "It is localized field"
+                }
+                associated(Boolean) {
+                    description = "Associated item(s) 'false' by default"
+                    defaultValue = false
+                }
+                columnName(String) {
+                    description = "Column Name"
+                }
+
+                containerType(Class) {
+                    description = "Describes the container type of attribute return value"
+                }
+
+                description(String) {
+                    description = "Description of attribute"
+                }
+
+                unique(Boolean) {
+                    description = "Is Attributes should to be unique"
+                    defaultValue = false
+                }
+
+                optional(Boolean) {
+                    description = "Is Attributes should to be optional"
+                    defaultValue = true
+                }
+
+                dynamic(Boolean) {
+                    description = "Is Attribute should be stored in persistence provider"
+                    defaultValue = false
+                }
+
+                defaultValue(String) {
+                    description = "default value expression statement"
+                }
+
+                source(Boolean) {
+                    description = "Specify that this attribute is source in relation"
+                }
+            }
+        }
+
+        MetaEnumType {
+            description = "Enum type holds information about java enum type"
+            attributes {
+                enumClass(Class) {
+                    description = "Enum class name"
+                    optional = false
+                }
+                enumCode(String) {
+                    description = "Enum code"
+                    optional = false
+                }
+            }
+        }
+
+        MetaEnumValueType {
+            description = "Enum type holds information about java enum value "
+            attributes {
+                code(String) {
+                    description = "Enum instance code"
+                }
+                value(String) {
+                    description = "Enum instance value"
+                }
+            }
+        }
+
+        MetaRelationType(extend: MetaType, table: false) {
+            description = "Relation type holds information of relations between items"
+
+            attributes {
+                sourceType(MetaType) {
+                    description = "Specify type of source insistence"
+                }
+
+                sourceAttribute(MetaAttributeType) {
+                    description = "Specify attribute of source relation owner"
+                }
+
+                targetType(MetaType) {
+                    description = "Specify type of target insistence"
+                }
+
+                targetAttribute(MetaAttributeType) {
+                    description = "Specify attribute of target relation owner"
+                }
+            }
+        }
+    }
+
+    enums {
+    }
+}

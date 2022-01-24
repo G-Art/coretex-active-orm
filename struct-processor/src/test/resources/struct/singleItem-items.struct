@@ -1,0 +1,12 @@
+elements {
+     items {
+        Test(extend: "") {
+            description = "Test item"
+            attributes {
+                testAttribute(LocalDateTime) {
+                    description = "Attribute description"
+                }
+            }
+        }
+    }
+}

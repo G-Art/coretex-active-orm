@@ -1,0 +1,64 @@
+#* @vtlvariable name="StringUtils" type="org.apache.commons.lang3.StringUtils" *#
+package ${item.package};
+
+/*
+* ----------------------------------------------------------------
+* --- WARNING: THIS FILE IS GENERATED AND WILL BE OVERWRITTEN!
+* --- Generated at ${date.get('yyyy-MM-dd HH:mm:ss')}
+* ----------------------------------------------------------------
+*/
+
+import com.coretex.orm.core.services.items.context.ItemContext;
+#{if}(${item.parentItem})#{else}import com.coretex.meta.AbstractGenericItem;#{end}
+
+#foreach(${import} in ${item.imports})
+import ${import};
+#end
+
+#if(${StringUtils.isNotBlank(${item.description})})
+/**
+ * ${item.description}
+ */
+#end
+public #{if}(${item.abstract})abstract #{end}class ${item.typeName} extends#if(${item.parentItem}) ${item.parentItem.typeName} #else AbstractGenericItem #end{
+
+    public static final String ITEM_TYPE = "${item.code}";
+
+#foreach(${attr} in ${item.attributes})
+    /**
+    * ------------------------------------------------------------------------------------------------------------------
+    *
+    * Generated field info { @name          : ${attr.name}
+    *                        @optional      : ${attr.optional}
+    *                        @unique        : ${attr.unique}
+    *                        @defaultValue  : #if(${attr.defaultValue})${attr.defaultValue}#else n/a #end
+
+    *                        @localized     : ${attr.localized}
+    *                        @associated    : ${attr.associated}
+    *                        @owner         : ${item.typeName}
+    *                        @type          : #if(${vmUtils.isRegularType($attr.type)})${attr.type.shortCode}#else${attr.type.fullTypeName}#end
+
+    *
+    * ------------------------------------------------------------------------------------------------------------------
+    */
+    public static final String ${vmUtils.toUpperCaseWithUnderline(${attr.name})} = "${attr.name}";
+
+#end
+    public ${item.typeName}() {
+        super();
+    }
+
+    public ${item.typeName}(ItemContext ctx) {
+        super(ctx);
+    }
+#foreach(${attr} in ${item.attributes})
+#parse("class/templates/attribute.vm")
+
+#end
+}
+
+#* @vtlvariable name="date" type="org.apache.velocity.tools.generic.DateTool" *#
+#* @vtlvariable name="esc" type="org.apache.velocity.tools.generic.EscapeTool" *#
+#* @vtlvariable name="display" type="org.apache.velocity.tools.generic.DisplayTool" *#
+#* @vtlvariable name="item" type="com.coretex.build.data.items.ClassItem" *#
+#* @vtlvariable name="vmUtils" type="com.coretex.common.utils.VmUtils" *#

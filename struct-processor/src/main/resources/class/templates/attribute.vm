@@ -1,0 +1,62 @@
+#if($attr.localized)
+#if($StringUtils.isNotBlank($attr.description))
+    /**
+    * ${attr.description}
+    */
+#end
+#set($type =
+"#if(${vmUtils.isRegularType($attr.type)})
+$attr.type.shortCode
+#else
+${vmUtils.typeForRelation($attr)}
+#end")
+    public $type.trim() get${display.capitalize($attr.name)}(){
+        return getItemContext().getLocalizedValue(${vmUtils.toUpperCaseWithUnderline(${attr.name})});
+    }
+    public $type.trim() get${display.capitalize($attr.name)}(Locale locale){
+        return getItemContext().getLocalizedValue(${vmUtils.toUpperCaseWithUnderline(${attr.name})}, locale);
+    }
+    public Map<Locale, $type.trim()> all${display.capitalize($attr.name)}(){
+        return getItemContext().getLocalizedValues(${vmUtils.toUpperCaseWithUnderline(${attr.name})});
+    }
+
+#if($StringUtils.isNotBlank($attr.description))
+    /**
+    * ${attr.description}
+    */
+#end
+    public void set${display.capitalize(${attr.name})}($type.trim() ${vmUtils.sanitizeKeyword(${attr.name})}){
+        getItemContext().setLocalizedValue(${vmUtils.toUpperCaseWithUnderline(${attr.name})}, ${vmUtils.sanitizeKeyword(${attr.name})});
+    }
+    public void set${display.capitalize(${attr.name})}($type.trim() ${vmUtils.sanitizeKeyword(${attr.name})}, Locale locale){
+        getItemContext().setLocalizedValue(${vmUtils.toUpperCaseWithUnderline(${attr.name})}, ${vmUtils.sanitizeKeyword(${attr.name})}, locale);
+    }
+#else
+#set($type =
+"#if(${vmUtils.isRegularType($attr.type)})
+$attr.type.shortCode
+#else
+${vmUtils.typeForRelation($attr)}
+#end")
+#if($StringUtils.isNotBlank($attr.description))
+    /**
+    * ${attr.description}
+    */
+#end
+    public $type.trim() get${display.capitalize($attr.name)}(){
+        return getItemContext().getValue(${vmUtils.toUpperCaseWithUnderline(${attr.name})});
+    }
+
+#if($StringUtils.isNotBlank($attr.description))
+    /**
+    * ${attr.description}
+    */
+#end
+    public void set${display.capitalize(${attr.name})}($type.trim() ${vmUtils.sanitizeKeyword(${attr.name})}){
+        getItemContext().setValue(${vmUtils.toUpperCaseWithUnderline(${attr.name})}, ${vmUtils.sanitizeKeyword(${attr.name})});
+    }
+#end
+#*@vtlvariable name="vmUtils" type="com.coretex.common.utils.VmUtils"
+*@vtlvariable name="date" type="org.apache.velocity.tools.generic.DateTool"
+*@vtlvariable name="display" type="org.apache.velocity.tools.generic.DisplayTool"
+*@vtlvariable name="attr" type="com.coretex.build.data.items.attributes.Attribute"*#

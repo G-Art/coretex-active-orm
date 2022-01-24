@@ -1,0 +1,8 @@
+#macro(insertInto $inserts)
+#foreach(${insert} in ${inserts})
+${queryFactory.statementQueryFactory().insertInto(${insert})}
+#end
+#end
+
+#* @vtlvariable name="vmUtils" type="com.coretex.common.utils.VmUtils" *#
+#* @vtlvariable name="queryFactory" type="com.coretex.build.services.QueryFactory" *#

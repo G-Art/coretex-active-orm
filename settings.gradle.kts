@@ -1,0 +1,12 @@
+rootProject.name = "coretex-active-orm"
+include("orm-gradle-build-plugin")
+include("struct-grammar")
+include("struct-processor")
+//include("intellij-coretex-plugin")
+include("coretex-active-orm-essential")
+include("coretex-active-orm-stub")
+include("coretex-active-orm-common")
+include("coretex-active-orm-impl-spring")
+include("coretex-active-orm-impl-default")
+include("coretex-active-orm-mysql-dialect")
+include("coretex-active-orm-postgresql-dialect")

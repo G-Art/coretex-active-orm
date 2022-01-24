@@ -1,0 +1,24 @@
+elements {
+    relations {
+        GenericMetaTypeRelation(source: Generic target: MetaType) {
+            source(metaType) {
+                description = "Relation to meta type description"
+                optional = false
+            }
+            target(instances) {
+                description = "List of all of instances of this type"
+                containerType = List
+            }
+        }
+        MetaAttributeOwnerRelation(source: MetaAttributeType target: MetaType) {
+            source(owner) {
+                description = "Owner of this attribute"
+                optional = false
+            }
+            target(itemAttributes) {
+                description = "Super Type uuid"
+                containerType = Set
+            }
+        }
+    }
+}

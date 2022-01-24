@@ -1,0 +1,134 @@
+{
+  parserClass = "com.coretex.struct.gen.parser.StructParser"
+  parserUtilClass="com.coretex.struct.parser.StructParserUtil"
+
+  extends="com.coretex.struct.psi.StructElementImpl"
+  implements = "com.coretex.struct.psi.StructElement"
+
+  extends("id_value|attribute_id_value|source_attr|target_attr")="com.coretex.struct.psi.StructNamedElementImpl"
+  implements("id_value|attribute_id_value|source_attr|target_attr")=[
+    "com.coretex.struct.psi.StructElement"
+    "com.intellij.psi.PsiNamedElement"
+  ]
+
+  extends(".*_declaration")="com.coretex.struct.psi.StructNamedElementDeclarationImpl"
+  implements(".*_declaration")=[
+    "com.coretex.struct.psi.StructNamedElementDeclaration"
+  ]
+
+  psiImplUtilClass = "com.coretex.struct.psi.StructPsiImplUtils"
+
+  psiClassPrefix="Struct"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.coretex.struct.gen.parser.psi"
+  psiImplPackage="com.coretex.struct.gen.parser.psi.impl"
+
+  elementTypeHolderClass="com.coretex.struct.gen.parser.psi.StructTypes"
+  elementTypeClass="com.coretex.struct.psi.StructElementType"
+  tokenTypeClass="com.coretex.struct.psi.StructTokenType"
+
+
+  tokens=[
+
+  WHITE_SPACE         = 'regexp:([ \t\f]|([\n])|([\r])|(\r\n))'
+
+  SET                 = ':'
+  EQUALS              = '='
+
+  LEFT_PAREN          = '('
+  RIGHT_PAREN         = ')'
+  LEFT_BRACE          = '{'
+  RIGHT_BRACE         = '}'
+  LEFT_SQR_BRACE      = '['
+  RIGHT_SQR_BRACE     = ']'
+  COMMA               = ','
+  COMMENT             = 'regexp://.*'
+
+  // Strings
+  STRING_LITERAL      = "regexp:'([^'\\]|\\.)*'|\"([^\"\\]|\\.)*\""
+
+  ELEMENTS          = "elements"
+  RELATIONS         = "relations"
+  ITEMS             = "items"
+  ENUMS             = "enums"
+  ATTRIBUTES        = "attributes"
+  TRUE              = "true"
+  FALSE             = "false"
+
+  ID                  = "regexp:([A-Z][[A-Z][a-z]|[0-9]]+)"
+  ATTRIBUTE_ID        = "regexp:[a-z][[A-Z]|[a-z]|[0-9]]+"
+  ]
+
+}
+root ::= !<<eof>> elements_expr <<eof>> {pin=1 recoverWhile = recover_left_brace}
+
+/*#################################################################################*/
+/*                                 GENERAL Rules                                  */
+/*#################################################################################*/
+
+bool_values                 ::= TRUE | FALSE
+
+index_array                 ::= LEFT_SQR_BRACE (string_literal_value) (COMMA string_literal_value)* RIGHT_SQR_BRACE {pin=1}
+
+param_setter_attr_rule      ::= attribute_id_value EQUALS (bool_values | index_array | string_literal_value | id_value){pin=2}
+item_attr_set_param_rule    ::= attribute_id_value SET (string_literal_value | id_value | bool_values) {pin = 2}
+
+string_literal_value        ::= STRING_LITERAL
+
+id_value                    ::= ID
+attribute_id_value          ::= ATTRIBUTE_ID
+
+/*#################################################################################*/
+/*                                 elements Rules                                  */
+/*#################################################################################*/
+elements_expr              ::= ELEMENTS LEFT_BRACE rel_items_rule? item_items_rule? enum_items_exp? RIGHT_BRACE {pin=2 recoverWhile =recover_left_brace
+implements = "com.coretex.struct.psi.StructKeywordElement"
+extends = "com.coretex.struct.psi.StructKeywordElementImpl"}
+
+/*#################################################################################*/
+/*                                 relations Rules                                 */
+/*#################################################################################*/
+rel_items_rule             ::= RELATIONS LEFT_BRACE rel_item_declaration* RIGHT_BRACE {pin=2 implements = "com.coretex.struct.psi.StructKeywordElement"
+                                                                                             extends = "com.coretex.struct.psi.StructKeywordElementImpl"}
+
+rel_item_declaration       ::= id_value LEFT_PAREN rel_attrs_rule RIGHT_PAREN rel_item_param_rule {pin=2}
+rel_attrs_rule             ::= item_attr_set_param_rule COMMA item_attr_set_param_rule {pin=1}
+
+rel_item_param_rule               ::= LEFT_BRACE rel_param_source_rule rel_param_target_rule RIGHT_BRACE {pin=1}
+inner rel_param_source_rule       ::= attribute_id_value LEFT_PAREN attribute_id_value RIGHT_PAREN rel_param_attributes {pin =2}
+inner rel_param_target_rule       ::= attribute_id_value LEFT_PAREN attribute_id_value RIGHT_PAREN rel_param_attributes {pin =2}
+
+rel_param_attributes        ::= LEFT_BRACE param_setter_attr_rule* RIGHT_BRACE {pin=1}
+
+
+/*#################################################################################*/
+/*                                 items Rules                                     */
+/*#################################################################################*/
+item_items_rule              ::= ITEMS LEFT_BRACE item_item_declaration* RIGHT_BRACE {pin = 2 implements = "com.coretex.struct.psi.StructKeywordElement"
+                                                                                              extends = "com.coretex.struct.psi.StructKeywordElementImpl"}
+
+item_item_declaration        ::= id_value item_attrts_rule? item_item_param_rule {pin=1}
+item_attrts_rule             ::= LEFT_PAREN item_attr_set_params_rule? RIGHT_PAREN {pin = 1}
+item_item_param_rule         ::= LEFT_BRACE param_setter_attr_rule? item_attrs_rule? RIGHT_BRACE {pin=1}
+
+item_attr_set_params_rule    ::= item_attr_set_param_rule (COMMA item_attr_set_params_rule)* {pin =1}
+item_attrs_rule              ::= ATTRIBUTES LEFT_BRACE item_attr_dclr_rule* RIGHT_BRACE {pin=2 recoverWhile =recover_field implements = "com.coretex.struct.psi.StructKeywordElement"
+                                                                                                                           extends = "com.coretex.struct.psi.StructKeywordElementImpl"}
+item_attr_dclr_rule          ::= attribute_id_value LEFT_PAREN id_value RIGHT_PAREN item_param_attributes? {pin=2 }
+
+item_param_attributes        ::= LEFT_BRACE param_setter_attr_rule* RIGHT_BRACE {pin=1}
+
+/*#################################################################################*/
+/*                                 enums Rules                                     */
+/*#################################################################################*/
+enum_items_exp              ::= ENUMS LEFT_BRACE enum_item_declaration* RIGHT_BRACE {pin=2 implements = "com.coretex.struct.psi.StructKeywordElement"
+                                                                                           extends = "com.coretex.struct.psi.StructKeywordElementImpl"}
+enum_item_declaration       ::= id_value enum_attrts_rule? LEFT_BRACE attribute_id_value* RIGHT_BRACE {pin=1}
+enum_attrts_rule            ::= LEFT_PAREN item_attr_set_param_rule RIGHT_PAREN {pin=1}
+
+/*#################################################################################*/
+/*                                 Recover Rules                                   */
+/*#################################################################################*/
+
+private recover_left_brace ::= !(LEFT_BRACE)
+private recover_field ::= !(attribute_id_value LEFT_PAREN | RIGHT_BRACE)

@@ -1,0 +1,74 @@
+elements {
+    items {
+        Generic(extend: "") {
+            description = "Generic item"
+            attributes {
+                createDate(LocalDateTime) {
+                    description = "Creation date"
+                }
+
+                updateDate(LocalDateTime) {
+                    description = "Updating date"
+                }
+            }
+        }
+
+        RegularType {
+            description = "Regular item"
+            attributes {
+                dbType(String) {
+                    description = "Sql type representation"
+                    optional = false
+                }
+
+                regularItemCode(String) {
+                    description = "Java type representation"
+                    unique = true
+                    optional = false
+                }
+
+                regularClass(Class) {
+                    description = "Java class type representation"
+                    optional = false
+                }
+
+                persistenceType(String) {
+                    description = "Persistence value qualifier"
+                }
+
+                columnSize(Integer) {
+                    description = "Persistence value qualifier"
+                }
+            }
+        }
+
+        MetaRelationType(extend: MetaType, table: false) {
+            description = "Relation type holds information of relations between items"
+
+            attributes {
+                sourceType(MetaType) {
+                    description = "Specify type of source insistence"
+                }
+
+                sourceAttribute(MetaAttributeType) {
+                    description = "Specify attribute of source relation owner"
+                }
+
+                targetType(MetaType) {
+                    description = "Specify type of target insistence"
+                }
+
+                targetAttribute(MetaAttributeType) {
+                    description = "Specify attribute of target relation owner"
+                }
+
+                source(Generic) {
+
+                }
+                target(Generic) {
+
+                }
+            }
+        }
+    }
+}

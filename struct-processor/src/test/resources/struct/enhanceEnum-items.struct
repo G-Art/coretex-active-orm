@@ -1,0 +1,11 @@
+elements {
+     enums {
+        Test {
+            testAttribute
+        }
+
+        Test(enhance: 'test_module') {
+            testAttribute2
+        }
+    }
+}

@@ -1,0 +1,49 @@
+#* @vtlvariable name="StringUtils" type="org.apache.commons.lang3.StringUtils" *#
+package ${item.package};
+/*
+* ----------------------------------------------------------------
+* --- WARNING: THIS FILE IS GENERATED AND WILL BE OVERWRITTEN!
+* --- Generated at ${date.get('yyyy-M-d H:m:s')}
+* ----------------------------------------------------------------
+*/
+#if(${StringUtils.isNoneBlank(${item.description})})
+/**
+* ${item.description}
+*/
+#end
+public enum ${item.typeName}{
+#foreach(${val} in ${item.values})
+    ${val.value.toUpperCase()}("${val.value}")#if($foreach.last);#else,
+#end
+#end
+
+    private String value;
+
+    ${item.typeName}(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return value;
+    }
+
+    public static ${item.typeName} fromString(String stateValue) {
+        if (stateValue == null) {
+            return null;
+        }
+
+        for (${item.typeName} state : ${item.typeName}.values()) {
+            if (state.value.equals(stateValue)) {
+                return state;
+            }
+        }
+
+        return null;
+    }
+
+    public static final String ITEM_TYPE = "${vmUtils.toUpperCaseWithUnderline(${item.typeName})}";
+}
+#* @vtlvariable name="date" type="org.apache.velocity.tools.generic.DateTool" *#
+#* @vtlvariable name="item" type="com.coretex.build.data.items.EnumItem" *#
+#* @vtlvariable name="vmUtils" type="com.coretex.common.utils.VmUtils" *#

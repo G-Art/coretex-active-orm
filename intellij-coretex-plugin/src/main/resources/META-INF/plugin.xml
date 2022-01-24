@@ -1,0 +1,58 @@
+<idea-plugin require-restart="true">
+    <id>intellij-coretex-plugin</id>
+    <name>CoreTex Web Platform</name>
+    <vendor email="gerasymenko.art@gmail.com" url="https://coretexplatform.com">CoreTex web platform</vendor>
+
+    <description><![CDATA[
+    <p>Support for <a href="https://coretexplatform.com">CoreTex web platform</a></p>
+    <p>Features</p>
+    <ul>
+    <li>Smart coding assistance for .struct that includes highlight, navigation, intentions, and more</li>
+    <li>The IDE detects the problems with your code for .struct on-the-fly </li>
+    <li>Create new .struct file with common structure</li>
+    <li>Add support version: 2021.3</li>
+    </ul>
+    ]]></description>
+
+    <!-- please see https://plugins.jetbrains.com/docs/intellij/plugin-compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.java</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <fileType name="Struct file" implementationClass="com.coretex.struct.PStructFileType"
+                  fieldName="INSTANCE_PROXY" language="Struct" extensions="struct"/>
+
+        <internalFileTemplate name="Struct file"/>
+
+        <completion.contributor language="Struct"
+                                implementationClass="com.coretex.struct.StructCompletionContributor"/>
+
+        <lang.parserDefinition language="Struct"
+                               implementationClass="com.coretex.struct.bnf.StructParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="Struct"
+                                       implementationClass="com.coretex.struct.highlighting.StructSyntaxHighlighterFactory"/>
+        <lang.braceMatcher language="Struct" implementationClass="com.coretex.struct.StructBraceMatcher"/>
+        <lang.commenter language="Struct" implementationClass="com.coretex.struct.StructCommenter"/>
+        <lang.foldingBuilder language="Struct"
+                             implementationClass="com.coretex.struct.StructFoldingBuilder"/>
+
+        <colorSettingsPage implementation="com.coretex.struct.highlighting.StructColorsPage"/>
+        <quoteHandler fileType="Struct file" className="com.coretex.struct.StructQuoteHandler"/>
+        <annotator language="Struct" implementationClass="com.coretex.struct.highlighting.StructAnnotator"/>
+
+        <codeInsight.lineMarkerProvider language="Struct"
+                                        implementationClass="com.coretex.struct.StructItemLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider language="JAVA"
+                                        implementationClass="com.coretex.struct.StructItemDeclarationLineMarkerProvider"/>
+
+    </extensions>
+
+    <actions>
+        <action id="Struct.NewStructFile"
+                class="com.coretex.struct.CreateStructFileAction">
+            <add-to-group group-id="NewGroup" anchor="after" relative-to-action="NewFile"/>
+        </action>
+    </actions>
+</idea-plugin>
